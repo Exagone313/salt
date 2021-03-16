@@ -52,6 +52,7 @@ def parse_ssh_config(lines):
     """
     # transform the list of individual lines into a list of sublists where each
     # sublist represents a single Host definition
+    # ignores global config (before any Host line)
     hosts = []
     for line in lines:
         line = salt.utils.stringutils.to_unicode(line)
@@ -59,7 +60,8 @@ def parse_ssh_config(lines):
             continue
         elif line.startswith("Host "):
             hosts.append([])
-        hosts[-1].append(line)
+        if hosts:
+            hosts[-1].append(line)
 
     # construct a dictionary of Host names to mapped roster properties
     targets = collections.OrderedDict()
